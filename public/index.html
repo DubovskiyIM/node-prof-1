@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Отправка файла</title>
+    <meta charset="utf-8">
+    <style>
+        .r {
+            border-radius: 50%;
+            height: 28px;
+            width: 28px;
+            zoom: 150%
+        }
+
+        [type=file] {
+            display: none
+        }
+
+        #f2 {
+            background: gold
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <button id="b" class="r" title="Приложить файл">📎</button>
+    </div>
+    <form method="post" id="frm" action="/zip">
+        <input name="fff" id="fff" type="file">
+        <label for="fff">Выберите файл</label>
+        <br><br>
+        <p>Нажмите для архивирования:</p>
+        <button id="f2" class="r" title="Отправить скриптом">✈️</button>
+    </form>
+
+    <script>
+      const tf = document.querySelector('[type=file]');
+
+      document.querySelector('#b').addEventListener('click', () => {
+        tf.dispatchEvent(new MouseEvent('click'));
+      });
+
+      tf.addEventListener('change', () => {
+        if (tf.files[0]) {
+          document.querySelector('label').textContent = tf.files[0].name;
+        }
+      });
+
+      document.querySelector('#f2')
+        .addEventListener('click', e => {
+          (async () => {
+            let r = await fetch(document.querySelector('#frm').action, {
+              method: 'POST',
+              body: tf.files[0]
+            });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(await r.blob());
+            a.download = 'my.zip';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          })();
+          e.preventDefault();
+        });
+
+    </script>
+</body>
+</html>
