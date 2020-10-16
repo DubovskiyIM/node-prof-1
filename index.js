@@ -10,7 +10,13 @@ app
   .post('/zip', (req, res) => {
     req
       .pipe(zlib.createGzip())
-      .pipe(res)
+      .pipe(res);
+  })
+  .use((req, res) => {
+    res
+      .status(404)
+      .set('Content-Type', 'text/html')
+      .send('<h1 style="color: darkred">Not Founded</h1>');
   })
   .listen(process.env.PORT || PORT, () => `Process run on ${PORT} port`);
 
